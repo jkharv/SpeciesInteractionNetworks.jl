@@ -1,5 +1,5 @@
 """
-    distancetobase(::Type{SPM}, N::SpeciesInteractionNetwork{<:Unipartite{T}, <:Interactions}, sp::T, f) where {T, SPM <: ShortestPathMethod}
+    distancetobase(::Type{SPM}, N::SpeciesInteractionNetwork{<:Unipartite{T}, <:Interaction}, sp::T, f) where {T, SPM <: ShortestPathMethod}
 
 Measures the distance of species `sp` to a basal species in the food web, where
 a basal species is defined as having a [`generaliry`](@ref) of 0.
@@ -31,29 +31,34 @@ strong indication of how *vertically* diverse it is
 
 [Thompson2012Food](@citet*)
 """
-function distancetobase(::Type{SPM}, N::SpeciesInteractionNetwork{<:Unipartite{T}, <:Interactions}, sp::T, f) where {T, SPM <: ShortestPathMethod}
+function distancetobase(::Type{SPM}, N::SpeciesInteractionNetwork{<:Unipartite{T}, <:Interaction}, sp::T, f) where {T, SPM <: ShortestPathMethod}
+
     paths = shortestpath(SPM, N, sp)
     basal_species = filter(s -> iszero(generality(N, s)), species(N))
     connected_basal_species = filter(s -> s in keys(paths), basal_species)
+
     if isempty(connected_basal_species)
+
         return 1.0
     end
+
     distances = [paths[s] for s in connected_basal_species]
+
     return f(distances) + 1.0
 end
 
 """
-    distancetobase(N::SpeciesInteractionNetwork{<:Unipartite{T}, <:Interactions}, sp::T) where {T}
+    distancetobase(N::SpeciesInteractionNetwork{<:Unipartite{T}, <:Interaction}, sp::T) where {T}
 
 Default measure of [`distancetobase`](@ref) using the [`BellmanFord`](@ref)
 shortest paths and the maximum distance.
 """
-distancetobase(N::SpeciesInteractionNetwork{<:Unipartite{T}, <:Interactions}, sp::T) where {T} = distancetobase(BellmanFord, N, sp, maximum)
+distancetobase(N::SpeciesInteractionNetwork{<:Unipartite{T}, <:Interaction, <:Union{Number, Missing}}, sp::T) where {T} = distancetobase(BellmanFord, N, sp, maximum)
 
 """
-    distancetobase(N::SpeciesInteractionNetwork{<:Unipartite{T}, <:Interactions}, sp::T, f) where {T}
+    distancetobase(N::SpeciesInteractionNetwork{<:Unipartite{T}, <:Interaction}, sp::T, f) where {T}
 
 Default measure of [`distancetobase`](@ref) using the [`BellmanFord`](@ref)
 shortest paths and the distance returned by `f`.
 """
-distancetobase(N::SpeciesInteractionNetwork{<:Unipartite{T}, <:Interactions}, sp::T, f) where {T} = distancetobase(BellmanFord, N, sp, f)
+distancetobase(N::SpeciesInteractionNetwork{<:Unipartite{T}, <:Interaction, <:Union{Number, Missing}}, sp::T, f) where {T} = distancetobase(BellmanFord, N, sp, f)

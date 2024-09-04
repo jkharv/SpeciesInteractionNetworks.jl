@@ -21,80 +21,82 @@ import Mangal
 # Tests to define what can be used in base types
 # include(joinpath(".", "misc", "init_tests.jl"))
 
-include("types/exceptions.jl")
-export BipartiteProjectionFailed
+# include("types/exceptions.jl")
+# export BipartiteProjectionFailed
 
 include("types/declarations.jl")
-export Partiteness, Interactions
+export Partiteness, Interaction
 export Bipartite, Unipartite
-export Binary, Quantitative, Probabilistic
+export Directed, Undirected, Hyperedge, AnnotatedHyperedge
 export SpeciesInteractionNetwork
 
-include("types/constructors.jl")
+# include("types/constructors.jl")
 
 include("types/interface.jl")
-export species, richness
+export species, richness, interactions
+export isloop
+export role, roles, has_role, with_role, subject, object
 
-include("types/copy.jl")
+# include("types/copy.jl")
 
-include("types/render.jl")
-export render
+# include("types/render.jl")
+# export render
 
-include("interfaces/abstractarray.jl")
-include("interfaces/iteration.jl")
-include("interfaces/table.jl")
-include("interfaces/broadcast.jl")
-include("interfaces/linearalgebra.jl")
+# include("interfaces/abstractarray.jl")
+# include("interfaces/iteration.jl")
+# include("interfaces/table.jl")
+# include("interfaces/broadcast.jl")
+# include("interfaces/linearalgebra.jl")
 
-export svd, rank, diag
-export complexity, tsvd, rdpg
+# export svd, rank, diag
+# export complexity, tsvd, rdpg
 
-include("basics/interactions.jl")
-export interactions
+# include("basics/interactions.jl")
+# export interactions
 
-include("basics/neighbors.jl")
-export successors, predecessors, neighbors
+# include("basics/neighbors.jl")
+# export successors, predecessors, neighbors
 
-include("basics/subgraphs.jl")
-export subgraph
+# include("basics/subgraphs.jl")
+# export subgraph
 
-include("random/permutations.jl")
-export PermutationConstraint, Degree, Generality, Vulnerability, Connectance
-export swap!
+# include("random/permutations.jl")
+# export PermutationConstraint, Degree, Generality, Vulnerability, Connectance
+# export swap!
 
-include("random/structural.jl")
-export StructuralModel
+# include("random/structural.jl")
+# export StructuralModel
 
-include("random/structural/nichemodel.jl")
-export NicheModel
+# include("random/structural/nichemodel.jl")
+# export NicheModel
 
-export structuralmodel
+# export structuralmodel
 
-include("random/draws.jl")
-export randomdraws
+# include("random/draws.jl")
+# export randomdraws
 
-include("random/linearfilter.jl")
-export linearfilter, nullmodel
+# include("random/linearfilter.jl")
+# export linearfilter, nullmodel
 
-include("random/contributions.jl")
-export speciescontribution
+# include("random/contributions.jl")
+# export speciescontribution
 
 include("micro_level/degree.jl")
 export degree
 export generality, vulnerability
 
-include("micro_level/specificity.jl")
-export specificity
+# include("micro_level/specificity.jl")
+# export specificity
 
-include("micro_level/centrality.jl")
-export CentralityMethod
-export KatzCentrality, EigenvectorCentrality
-export ClosenessCentrality, ResidualClosenessCentrality, GeneralizedClosenessCentrality
-export centrality
+# include("micro_level/centrality.jl")
+# export CentralityMethod
+# export KatzCentrality, EigenvectorCentrality
+# export ClosenessCentrality, ResidualClosenessCentrality, GeneralizedClosenessCentrality
+# export centrality
 
 include("meso_level/paths.jl")
 export ShortestPathMethod
-export normalize
+# export normalize
 export shortestpath, pathbetween
 
 include("micro_level/foodwebs.jl")
@@ -103,47 +105,47 @@ export distancetobase
 include("meso_level/paths/BellmanFord.jl")
 export BellmanFord
 
-include("meso_level/paths/Dijkstra.jl")
-export Dijkstra
+# include("meso_level/paths/Dijkstra.jl")
+# export Dijkstra
 
-include("meso_level/motifs/generators.jl")
-export motifs
+# include("meso_level/motifs/generators.jl")
+# export motifs
 
-include("meso_level/motifs/permutations.jl")
-include("meso_level/motifs.jl")
-export findmotif
+# include("meso_level/motifs/permutations.jl")
+# include("meso_level/motifs.jl")
+# export findmotif
 
-include("meso_level/modularity.jl")
-export modularity
+# include("meso_level/modularity.jl")
+# export modularity
 
-include("meso_level/modularity/labelpropagation.jl")
-export labelpropagation
+# include("meso_level/modularity/labelpropagation.jl")
+# export labelpropagation
 
-include("macro_level/connectance.jl")
-export connectance, links, linkagedensity
-export connectance_variance, links_variance, linkagedensity_variance
+# include("macro_level/connectance.jl")
+# export connectance, links, linkagedensity
+# export connectance_variance, links_variance, linkagedensity_variance
 
-include("macro_level/eta.jl")
-export η
+# include("macro_level/eta.jl")
+# export η
 
-include("macro_level/nodf.jl")
-export nodf
+# include("macro_level/nodf.jl")
+# export nodf
 
-include("macro_level/spectralradius.jl")
-export spectralradius
+# include("macro_level/spectralradius.jl")
+# export spectralradius
 
-include("macro_level/degeneracy.jl")
-export isdegenerate, isdisconnected
-export simplify
+# include("macro_level/degeneracy.jl")
+# export isdegenerate, isdisconnected
+# export simplify
 
-include("meta_level/set.jl")
-include("meta_level/partitions.jl")
-export BetaDivComponent
-export βS, βOS, βWN
-export betadiversity
+# include("meta_level/set.jl")
+# include("meta_level/partitions.jl")
+# export BetaDivComponent
+# export βS, βOS, βWN
+# export betadiversity
 
-include("meta_level/measures.jl")
-export KGL01, KGL02, KGL03, KGL04, KGL05, KGL06, KGL07, KGL08, KGL09, KGL10, KGL11, KGL12, KGL13, KGL14, KGL15, KGL16, KGL17, KGL18, KGL19, KGL20, KGL21, KGL22, KGL23, KGL24
+# include("meta_level/measures.jl")
+# export KGL01, KGL02, KGL03, KGL04, KGL05, KGL06, KGL07, KGL08, KGL09, KGL10, KGL11, KGL12, KGL13, KGL14, KGL15, KGL16, KGL17, KGL18, KGL19, KGL20, KGL21, KGL22, KGL23, KGL24
 
 include("data/mangal.jl")
 export mangalnetwork

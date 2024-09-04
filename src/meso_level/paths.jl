@@ -30,10 +30,14 @@ one.
 """
 abstract type ShortestPathMethod end
 
-_path_distance(::Type{Binary}, w) = w
-_path_distance(::Type{Quantitative}, w) = one(w) / w
-_path_distance(::Type{Probabilistic}, w) = 2one(w) - w
+# _path_distance(::Type{Binary}, w) = w
+# _path_distance(::Type{Quantitative}, w) = one(w) / w
+# _path_distance(::Type{Probabilistic}, w) = 2one(w) - w
 
+_path_distance(
+    N::SpeciesInteractionNetwork{<:Unipartite, <:Interaction, <:Any}, 
+    E::Interaction
+) = 1.0
 
 """
     BellmanFord
@@ -60,7 +64,7 @@ abstract type BellmanFord <: ShortestPathMethod end
 abstract type Dijkstra <: ShortestPathMethod end
 
 """
-    shortestpath(N::SpeciesInteractionNetwork{<:Partiteness{T}, <:Interactions}, sp::T)
+    shortestpath(N::SpeciesInteractionNetwork{<:Partiteness{T}, <:Interaction}, sp::T)
 
 Defaults to [`BellmanFord`](@ref) for the shortest path algorithm. See also
 [`Dijkstra`](@ref).
@@ -70,7 +74,7 @@ Note that in order to work with [`pathbetween`](@ref), any overload of
 when `true` returns a *second* dictionary giving the predecessors of each
 reached node.
 """
-shortestpath(N::SpeciesInteractionNetwork{<:Partiteness{T}, <:Interactions}, sp::T; kwargs...) where {T} = shortestpath(BellmanFord, N, sp; kwargs...)
+shortestpath(N::SpeciesInteractionNetwork{<:Partiteness{T}, <:Interaction}, sp::T; kwargs...) where {T} = shortestpath(BellmanFord, N, sp; kwargs...)
 
 """
     normalize(N::SpeciesInteractionNetwork{<:Partiteness, <:Quantitative})
@@ -78,22 +82,30 @@ shortestpath(N::SpeciesInteractionNetwork{<:Partiteness{T}, <:Interactions}, sp:
 Returns a quantitative network in which the interactions are normalized so that
 the average of interactions is one. Note that this excludes self-interactions.
 """
-function normalize(N::SpeciesInteractionNetwork{<:Partiteness, <:Quantitative})
-    m = mean([i[3] for i in interactions(N) if i[1] != i[2]])
-    return N ./ m
-end
+# function normalize(N::SpeciesInteractionNetwork{<:Partiteness, <:Quantitative})
+#     m = mean([i[3] for i in interactions(N) if i[1] != i[2]])
+#     return N ./ m
+# end
 
 """
-    pathbetween(::Type{ShortestPathMethod}, N::SpeciesInteractionNetwork{<:Partiteness{T}, <:Interactions}, source::T, target::T) where {T}
+    pathbetween(::Type{ShortestPathMethod}, N::SpeciesInteractionNetwork{<:Partiteness{T}, <:Interaction}, source::T, target::T) where {T}
 
 Returns the path between `source` and `target`. The result is given as a vector
 of interactions, *i.e.* it gives the subset of the output of `interactions(N)`
 going from `source` to `target`.
 """
-function pathbetween(::Type{SPM}, N::SpeciesInteractionNetwork{<:Partiteness{T}, <:Interactions}, source::T, target::T) where {SPM <: ShortestPathMethod, T}
+function pathbetween(
+    ::Type{SPM}, 
+    N::SpeciesInteractionNetwork{<:Partiteness{T}, <:Interaction}, 
+    source::T, 
+    target::T
+    ) where {SPM <: ShortestPathMethod, T}
+
     @assert source in species(N)
     @assert target in species(N)
+
     _, pred = shortestpath(SPM, N, source; include_paths=true)
+
     if !(target in keys(pred))
         return Vector{eltype(N)}()
     end
@@ -107,16 +119,21 @@ function pathbetween(::Type{SPM}, N::SpeciesInteractionNetwork{<:Partiteness{T},
         pop!(pred, reached)
         reached = through
     end
-    return reverse(path)
 
+    return reverse(path)
 end
 
 """
-    pathbetween(N::SpeciesInteractionNetwork{<:Partiteness{T}, <:Interactions}, source::T, target::T) where {T}
+    pathbetween(N::SpeciesInteractionNetwork{<:Partiteness{T}, <:Interaction}, source::T, target::T) where {T}
 
 Returns the path between `source` and `target`, using [`BellmanFord`](@ref) as
 the default algorithm.
 """
-function pathbetween(N::SpeciesInteractionNetwork{<:Partiteness{T}, <:Interactions}, source::T, target::T) where {T}
+function pathbetween(
+    N::SpeciesInteractionNetwork{<:Partiteness{T}, <:Interaction}, 
+    source::T, 
+    target::T
+    ) where {T}
+
     return pathbetween(BellmanFord, N, source, target)
 end

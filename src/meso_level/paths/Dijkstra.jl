@@ -1,55 +1,43 @@
-function shortestpath(
-    ::Type{Dijkstra},
-    N::SpeciesInteractionNetwork{<:Partiteness{T}, <:Interactions},
-    sp::T;
-    include_paths::Bool = false,
-) where {T}
-    @assert sp in species(N)
+# function shortestpath(
+#     ::Type{Dijkstra},
+#     N::SpeciesInteractionNetwork{<:Partiteness{T}, <:Interactions},
+#     sp::T;
+#     include_paths::Bool = false,
+#     ) where {T}
 
-    dist = Dict([s => Inf for s in species(N)])
-    pred = Dict{T, Union{Nothing, T}}([s => nothing for s in species(N)])
-    dist[sp] = 0.0
-    Q = species(N)
+#     @assert sp in species(N)
 
-    df = (x) -> _path_distance(_edgetype(N), x)
+#     dist = Dict([s => Inf for s in species(N)])
+#     pred = Dict{T, Union{Nothing, T}}([s => nothing for s in species(N)])
+#     dist[sp] = 0.0
+#     Q = species(N)
 
-    while !isempty(Q)
-        _, u = findmin(filter(p -> p.first ∈ Q, dist))
-        setdiff!(Q, [u])
-        whereto = filter(v -> v ∈ Q, successors(N, u))
-        if isempty(whereto)
-            break
-        end
-        for v in whereto
-            proposal = dist[u] + df(N[u, v])
-            if proposal < dist[v]
-                dist[v] = proposal
-                pred[v] = u
-            end
-        end
-    end
+#     df = (x) -> _path_distance(_edgetype(N), x)
 
-    for s in species(N)
-        if (isinf(dist[s])) | (isnothing(pred[s]))
-            pop!(dist, s, nothing)
-            pop!(pred, s, nothing)
-        end
-    end
-    return include_paths ? (dist, pred) : dist
-end
+#     while !isempty(Q)
 
-@testitem "Dijkstra works on binary networks" begin
-    nodes = Unipartite([:A, :B, :C, :D, :E, :F, :G])
-    edges = Binary(zeros(Bool, (richness(nodes), richness(nodes))))
-    N = SpeciesInteractionNetwork(nodes, edges)
-    for edge in
-        [(:A, :B), (:B, :C), (:C, :D), (:B, :E), (:C, :F), (:E, :F), (:F, :G), (:D, :D)]
-        N[edge...] = true
-    end
-    bf = shortestpath(Dijkstra, N, :B)
-    @test bf[:C] == 1
-    @test bf[:D] == 2
-    @test bf[:E] == 1
-    @test bf[:F] == 2
-    @test bf[:G] == 3
-end
+#         _, u = findmin(filter(p -> p.first ∈ Q, dist))
+#         setdiff!(Q, [u])
+#         whereto = filter(v -> v ∈ Q, successors(N, u))
+#         if isempty(whereto)
+#             break
+#         end
+#         for v in whereto
+#             proposal = dist[u] + df(N[u, v])
+#             if proposal < dist[v]
+#                 dist[v] = proposal
+#                 pred[v] = u
+#             end
+#         end
+#     end
+
+#     for s in species(N)
+
+#         if (isinf(dist[s])) | (isnothing(pred[s]))
+#             pop!(dist, s, nothing)
+#             pop!(pred, s, nothing)
+#         end
+#     end
+
+#     return include_paths ? (dist, pred) : dist
+# end

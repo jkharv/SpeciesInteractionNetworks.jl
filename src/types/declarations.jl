@@ -9,38 +9,26 @@ using strings or symbols.
 """
 abstract type Partiteness{T} end
 
-"""
-    Interactions{T}
+abstract type Interaction{T} end
 
-The interactions in a network are stored in a parametric sub-type of
-`Interactions`. By default, this can be `Binary`, `Quantitative`, and
-`Probabilistic`. The inner type `T` indicates what types are used to represent
-interactions.
-"""
-abstract type Interactions{T} end
+# For now it's a symbol, but I wanna seperate use of Symbol for roles cause in the
+# future, something fancier for roles may be to come.
+const RoleType = Symbol
 
-"""
-    SpeciesInteractionNetwork{P<:Partiteness, E<:Interactions}
+struct SpeciesInteractionNetwork{P<:Partiteness, E<:Interaction, Q<:Union{Number, Missing}}
 
-A `SpeciesInteractionNetwork` type represents a species interaction network.
-
-This type has two fields: `nodes` (a `Partiteness`), and `edges` (an
-`Interactions`). Because these two types are parametric, we can learn everything
-there is to know about the data structure in a network by looking at the type
-alone.
-
-For example, a bipartite quantitative network where species are symbols and
-interactions are 32-bits floating point numbers will have the type
-
-~~~
-SpeciesInteractionNetwork{Bipartite{Symbol}, Interactions{Float32}}
-~~~
-
-This enables very specialized dispatch and indexing thoughout the package.
-"""
-struct SpeciesInteractionNetwork{P<:Partiteness, E<:Interactions}
     nodes::P
-    edges::E
+    edges::Vector{E}
+    edge_weights::Union{AbstractMatrix{Q}, Missing}
+    node_weights::Union{AbstractMatrix{Q}, Missing}
+
+    function SpeciesInteractionNetwork(
+        nodes::P, 
+        edges::Vector{E}) where {P<:Partiteness, E<:Interaction}
+
+        new{P,E,Missing}(nodes, edges, missing, missing)
+
+    end
 end
 
 """
@@ -138,50 +126,25 @@ end
     @test_throws ArgumentError Unipartite([1, 2, 3, 4])
 end
 
-"""
-    Probabilistic{T <: AbstractFloat} <: Interactions{T}
+struct Directed{T} <: Interaction{T}
 
-Probabilistic interactions are represented (internally) as a sparse matrix of
-floating point values. The values *must* be in the unit interval for the type to
-be valid.
-"""
-struct Probabilistic{T <: AbstractFloat} <: Interactions{T}
-    edges::SparseMatrixCSC{T}
-    function Probabilistic(edges::SparseMatrixCSC{T}) where {T <: AbstractFloat}
-        if ~all(0.0 .<= edges .<= 1.0)
-            throw(ArgumentError("Probabilities must be in the unit interval"))
-        end
-        return new{T}(edges)
-    end
+    src::T
+    dst::T
 end
 
-@testitem "We cannot construct probabilistic matrices with values outside the unit interval" begin
-    @test_throws ArgumentError Probabilistic(rand(Float32, (2, 2)).*200.0)
+struct Undirected{T} <: Interaction{T}
+
+    sp1::T
+    sp2::T
 end
 
-"""
-    Quantitative{T <: Number} <: Interactions{T}
+struct Hyperedge{T} <: Interaction{T}
 
-Quantitative interactions are represented (internally) as a sparse matrix of numbers.
-"""
-struct Quantitative{T <: Number} <: Interactions{T}
-    edges::SparseMatrixCSC{T}
+    spp::Vector{T}
 end
 
-"""
-    Binary{Bool} <: Interactions{Bool}
+struct AnnotatedHyperedge{T} <: Interaction{T}
 
-Binary interactions are represented (internally) as a sparse matrix of Boolean
-values.
-"""
-struct Binary{Bool} <: Interactions{Bool}
-    edges::SparseMatrixCSC{Bool}
-end
-
-@testitem "We can construct a unipartite probabilistic network" begin
-    nodes = Unipartite([:a, :b, :c])
-    edges = Binary(rand(Bool, (3,3)))
-    N = SpeciesInteractionNetwork(nodes, edges)
-    @test richness(N) == 3
-    @test species(N) == [:a, :b, :c]
+    spp::Vector{T}
+    roles::Vector{RoleType}
 end
