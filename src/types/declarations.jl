@@ -20,14 +20,16 @@ struct SpeciesInteractionNetwork{P<:Partiteness, E<:Interaction, Q<:Union{Number
     nodes::P
     edges::Vector{E}
     edge_weights::Union{AbstractMatrix{Q}, Missing}
-    node_weights::Union{AbstractMatrix{Q}, Missing}
+    node_weights::Union{Vector{Q}, Missing}
 
     function SpeciesInteractionNetwork(
         nodes::P, 
-        edges::Vector{E}) where {P<:Partiteness, E<:Interaction}
+        edges::Vector{E};
+        edge_weights::Union{AbstractMatrix{Q}, Missing} = missing,
+        node_weights::Union{Vector{Q}, Missing} = missing) where 
+        {P<:Partiteness, E<:Interaction, Q<:Union{Number, Missing}}
 
-        new{P,E,Missing}(nodes, edges, missing, missing)
-
+        new{P,E,Q}(nodes, edges, edge_weights, node_weights)
     end
 end
 
