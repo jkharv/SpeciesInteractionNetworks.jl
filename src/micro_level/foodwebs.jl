@@ -53,7 +53,7 @@ end
 Default measure of [`distancetobase`](@ref) using the [`BellmanFord`](@ref)
 shortest paths and the maximum distance.
 """
-distancetobase(N::SpeciesInteractionNetwork{<:Unipartite{T}, <:Interaction, <:Union{Number, Missing}}, sp::T) where {T} = distancetobase(BellmanFord, N, sp, maximum)
+distancetobase(N::SpeciesInteractionNetwork{<:Unipartite{T}, <:Interaction}, sp::T) where {T} = distancetobase(BellmanFord, N, sp, maximum)
 
 """
     distancetobase(N::SpeciesInteractionNetwork{<:Unipartite{T}, <:Interaction}, sp::T, f) where {T}
@@ -61,4 +61,4 @@ distancetobase(N::SpeciesInteractionNetwork{<:Unipartite{T}, <:Interaction, <:Un
 Default measure of [`distancetobase`](@ref) using the [`BellmanFord`](@ref)
 shortest paths and the distance returned by `f`.
 """
-distancetobase(N::SpeciesInteractionNetwork{<:Unipartite{T}, <:Interaction, <:Union{Number, Missing}}, sp::T, f) where {T} = distancetobase(BellmanFord, N, sp, f)
+distancetobase(N::SpeciesInteractionNetwork{<:Unipartite{T}, <:Interaction}, sp::T, f) where {T} = distancetobase(BellmanFord, N, sp, f)

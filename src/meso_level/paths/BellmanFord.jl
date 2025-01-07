@@ -1,6 +1,6 @@
 function shortestpath(
     ::Type{BellmanFord},
-    N::SpeciesInteractionNetwork{<:Unipartite{T}, <:Interaction{T}, Missing},
+    N::SpeciesInteractionNetwork{<:Unipartite{T}, <:Interaction{T}},
     sp::T;
     include_paths::Bool = false
     ) where {T}

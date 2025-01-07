@@ -1,5 +1,5 @@
 function generality(
-    N::SpeciesInteractionNetwork{<:Partiteness{T}, <:Interaction, <:Any}, 
+    N::SpeciesInteractionNetwork{<:Partiteness{T}, <:Interaction}, 
     sp::T) where {T}
 
     d = filter(x -> (subject(x) == sp) & (object(x) ≠ sp), interactions(N))
@@ -46,7 +46,7 @@ end
 #     return count(!iszero, N[sp,:])
 # end
 
-function vulnerability(N::SpeciesInteractionNetwork{<:Partiteness{T}, <:Interaction, <:Any}, sp::T) where {T}
+function vulnerability(N::SpeciesInteractionNetwork{<:Partiteness{T}, <:Interaction}, sp::T) where {T}
 
     d = filter(x -> (object(x) == sp) & (subject(x) ≠ sp), interactions(N))
 

@@ -35,7 +35,7 @@ abstract type ShortestPathMethod end
 # _path_distance(::Type{Probabilistic}, w) = 2one(w) - w
 
 _path_distance(
-    N::SpeciesInteractionNetwork{<:Unipartite, <:Interaction, <:Any}, 
+    N::SpeciesInteractionNetwork{<:Unipartite, <:Interaction}, 
     E::Interaction
 ) = 1.0
 
